@@ -49,8 +49,12 @@
 
   <!-- Main -->
   <main class="mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Editor -->
+    <!-- Articles + Editor moved to bottom -->
     <section class="lg:col-span-2 space-y-6">
+      <!-- Articles List -->
+      <div class="space-y-4" id="articles"></div>
+
+      <!-- Editor (moved to bottom) -->
       <div class="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
         <div class="p-5 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
           <h2 class="text-lg font-semibold">フェイク記事エディタ</h2>
@@ -95,9 +99,6 @@
           </div>
         </form>
       </div>
-
-      <!-- Articles List -->
-      <div class="space-y-4" id="articles"></div>
     </section>
 
     <!-- Sidebar / Guidelines -->
@@ -237,24 +238,39 @@
       document.getElementById('source').value = '';
     });
 
-    // Seed samples (明らかにフィクションで無害な例)
-    const samples = [
-      {
-        category: '科学',
-        title: '【フィクション】冷蔵庫が夏休みを申請、氷がストライキへ',
-        lead: '家電労働組合（想像上）によると、今年の猛暑で休暇取得が相次いでいるという。',
-        body: '近所のコンセントは「代替電源の確保が必要」とコメント。専門家（空想）は、水分補給としてスイカを推奨した。',
-        source: ''
-      },
-      {
-        category: 'カルチャー',
-        title: '【フィクション】図書館、黙読に拍手導入　静けさが鳴り響く',
-        lead: '新ルールは来週から（もちろん冗談）。',
-        body: '司書は「静寂の中のスタンディングオベーション」と語ったとか語らないとか。',
-        source: ''
-      }
-    ];
+    // Generate N harmless sample articles
+    function generateSamples(n) {
+      const categories = ['科学','カルチャー','社会','テクノロジー','スポーツ','その他'];
+      const starters = [
+        '【フィクション】冷蔵庫が夏休みを申請、',
+        '【フィクション】図書館、黙読に拍手導入、',
+        '【フィクション】駅の自動改札が俳句コンテストを開始、',
+        '【フィクション】コンビニの弁当が朝食に逆襲、',
+        '【フィクション】AIが昼寝を推奨、',
+        '【フィクション】猫が市議会に出席、'
+      ];
+      const bodies = [
+        '近所の目撃者（匿名）は「信じられないが癒やされる」と話した。',
+        '専門家（架空）は効果を否定しているが、実際には誰も気にしていない。',
+        '現場は和やかで、保安係はただ首をかしげていた。',
+        '関係者（存在しない）は冗談めかして歓迎の意を示した。',
+        '伝統的な手法と最新テクノロジーの融合が話題になっている。'
+      ];
 
+      const samples = [];
+      for (let i = 1; i <= n; i++) {
+        const cat = categories[i % categories.length];
+        const starter = starters[i % starters.length];
+        const title = `${starter}街がちょっとだけ明るくなる案（No.${i})`;
+        const lead = `短いリード：これはユーモアとして書かれた架空の出来事です。（サンプル ${i}）`;
+        const body = bodies[i % bodies.length] + `（サンプル本文 ${i}）`;
+        samples.push({ category: cat, title, lead, body, source: '' });
+      }
+      return samples;
+    }
+
+    // Render generated samples (100)
+    const samples = generateSamples(100);
     for (const s of samples) {
       const tpl = document.getElementById('articleCard');
       const node = tpl.content.cloneNode(true);
